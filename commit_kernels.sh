@@ -1,6 +1,13 @@
 #!/bin/sh
 
 lift=$1
+
+if [ -z "$1" ]
+  then
+    echo "No lift root supplied, failing"
+    exit 1
+fi
+
 echo "lift root: $lift"
 
 # assume we have pushd available
