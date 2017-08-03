@@ -1,0 +1,44 @@
+{
+  "name" : "swrg-alcl-edp-chunk-8",
+  "source" : "#ifndef Tuple2_int_float_DEFINED\n#define Tuple2_int_float_DEFINED\ntypedef struct {\n  int _0;\n  float _1;\n} Tuple2_int_float;\n#endif\n\nfloat add(float x, float y){\n  \n//printf(\"x: %f, y: %f\\n\", x, y);\nreturn x+y;\n    \n}\nfloat mult(float l, float r){\n  \n//printf(\"l (vect): %f, r (matrix): %f\\n\", l, r);\nreturn l*r;\n    \n}\nint check(float acc, int v){\n  { return (v != -1);}\n}\nfloat doubleMultiplyAdd(float dpRes, float alpha, float rowIdxPair2, float beta){\n  \n{\n //printf(\"dpRes: %f, alpha: %f, rowIdxPair2: %f, beta: %f\\n\", dpRes,alpha,rowIdxPair2, beta);\n return (dpRes*alpha)+(rowIdxPair2*beta);\n}\n    \n}\nkernel void KERNEL(const global int* restrict v__3693, const global float* restrict v__3694, const global float* restrict v__3695, const global float* restrict v__3696, float v__3697, float v__3698, global float* v__3713, int v_MHeight_2, int v_MWidthC_1, int v_VLength_3){ \n#ifndef WORKGROUP_GUARD\n#define WORKGROUP_GUARD\n#endif\nWORKGROUP_GUARD\n{\n  /* Static local memory */\n  /* Typed Value memory */\n  float v__3700; \n  float v__3703; \n  /* Private Memory */\n  float v__3705_0;\n  \n  float v__3707_0;\n  \n  int v__3711_0;\n  \n  for (int v_wg_id_3689 = get_group_id(0); v_wg_id_3689 < ((v_MHeight_2)/(8)); v_wg_id_3689 = (v_wg_id_3689 + get_num_groups(0))) {\n    /* atomic_local_map */\n    {\n      local int v_work_idx_128; \n      v_work_idx_128 = 0; \n      int v_l_id_3690 = atomic_inc(&(v_work_idx_128)); \n      while((v_l_id_3690 < 8)){\n        float v_tmp_3757 = 0.0f; \n        v__3700 = v_tmp_3757; \n        /* reduce_while_seq */\n        for (int v_i_3691 = 0; v_i_3691 < v_MWidthC_1; v_i_3691 = (1 + v_i_3691)) {\n          v__3711_0 = check(v__3700, v__3693[(v_i_3691 + (8 * v_MWidthC_1 * v_wg_id_3689) + (v_MWidthC_1 * v_l_id_3690))]); \n          if (v__3711_0) {\n          } else {\n            break;\n          }\n          float v_tmp_3758 = 0.0f; \n          v__3703 = v_tmp_3758; \n          int v_index_3759 = v__3693[(v_i_3691 + (8 * v_MWidthC_1 * v_wg_id_3689) + (v_MWidthC_1 * v_l_id_3690))]; \n          if (v_index_3759 < 0) {\n            v__3705_0 = v__3703; \n          } else {\n            if (v_index_3759 >= v_VLength_3) {\n              v__3705_0 = v__3703; \n            } else {\n              v__3705_0 = v__3695[v_index_3759]; \n            }\n          }\n          v__3707_0 = mult(v__3705_0, v__3694[(v_i_3691 + (8 * v_MWidthC_1 * v_wg_id_3689) + (v_MWidthC_1 * v_l_id_3690))]); \n          v__3700 = add(v__3707_0, v__3700); \n        }\n        /* end reduce_while_seq */\n        /* map_seq */\n        /* iteration count is exactly 1, no loop emitted */\n        {\n          int v_i_3692 = 0; \n          v__3713[(v_l_id_3690 + (8 * v_wg_id_3689))] = doubleMultiplyAdd(v__3700, v__3697, v__3696[(v_l_id_3690 + (8 * v_wg_id_3689))], v__3698); \n        }\n        /* end map_seq */\n        v_l_id_3690 = atomic_inc(&(v_work_idx_128)); \n      }\n    }\n    barrier(CLK_GLOBAL_MEM_FENCE);\n    \n  }\n}}\n\n",
+  "properties" : {
+    "outerMap" : "swrg",
+    "innerMap" : "alcl",
+    "chunkSize" : "8",
+    "dotProduct" : "earlyexit"
+  },
+  "inputArgs" : [ {
+    "variable" : "v__3693",
+    "addressSpace" : "global",
+    "size" : "(4*v_MHeight_2*v_MWidthC_1)"
+  }, {
+    "variable" : "v__3694",
+    "addressSpace" : "global",
+    "size" : "(4*v_MHeight_2*v_MWidthC_1)"
+  }, {
+    "variable" : "v__3695",
+    "addressSpace" : "global",
+    "size" : "(4*v_VLength_3)"
+  }, {
+    "variable" : "v__3696",
+    "addressSpace" : "global",
+    "size" : "(4*v_MHeight_2)"
+  }, {
+    "variable" : "v__3697",
+    "addressSpace" : "private",
+    "size" : "4"
+  }, {
+    "variable" : "v__3698",
+    "addressSpace" : "private",
+    "size" : "4"
+  } ],
+  "tempGlobals" : [ ],
+  "outputArg" : {
+    "variable" : "v__3713",
+    "addressSpace" : "global",
+    "size" : "(4*v_MHeight_2)"
+  },
+  "tempLocals" : [ ],
+  "paramVars" : [ "MWidthC", "MHeight", "VLength" ],
+  "outputSize" : "(4*v_MHeight_2)"
+}
