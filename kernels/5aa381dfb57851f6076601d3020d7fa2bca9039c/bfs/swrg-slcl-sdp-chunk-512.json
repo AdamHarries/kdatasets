@@ -1,0 +1,47 @@
+{
+  "name" : "swrg-slcl-sdp-chunk-512",
+  "source" : "#ifndef Tuple2_int_int_DEFINED\n#define Tuple2_int_int_DEFINED\ntypedef struct {\n  int _0;\n  int _1;\n} Tuple2_int_int;\n#endif\n\nint bool_and(int a, int b){\n  { if((a != 0) && (b != 0 )){ return 1; }else{ return 0; } }\n}\nint bool_or(int a, int b){\n  { if((a != 0) || (b != 0 )){ return 1; }else{ return 0; } }\n}\nint doubleAndOr(int dpRes, int alpha, int rowIdxPair2, int beta){\n  \n{\n int OrRes1;\n if((dpRes != 0) && (alpha !=0)) {\n   OrRes1 = 1;\n } else {\n   OrRes1 = 0;\n }\n int OrRes2;\n if((rowIdxPair2 != 0) && (beta !=0)) {\n   OrRes2 = 1;\n } else {\n   OrRes2 = 0;\n }\n return (OrRes1 || OrRes2);\n}\n    \n}\nkernel void KERNEL(const global int* restrict v__53150, const global int* restrict v__53151, const global int* restrict v__53152, const global int* restrict v__53153, int v__53154, int v__53155, global int* v__53168, global int* v__53162, int v_MHeight_2, int v_MWidthC_1, int v_VLength_3){ \n#ifndef WORKGROUP_GUARD\n#define WORKGROUP_GUARD\n#endif\nWORKGROUP_GUARD\n{\n  /* Static local memory */\n  /* Typed Value memory */\n  int v__53158; \n  int v__53163; \n  /* Private Memory */\n  int v__53160_0;\n  \n  for (int v_wg_id_53145 = get_group_id(0); v_wg_id_53145 < v_MHeight_2; v_wg_id_53145 = (v_wg_id_53145 + get_num_groups(0))) {\n    for (int v_l_id_53146 = get_local_id(0); v_l_id_53146 < 512; v_l_id_53146 = (v_l_id_53146 + get_local_size(0))) {\n      /* map_seq */\n      for (int v_i_53147 = 0; v_i_53147 < v_MWidthC_1; v_i_53147 = (1 + v_i_53147)) {\n        int v_tmp_53212 = 0; \n        v__53158 = v_tmp_53212; \n        int v_index_53213 = v__53150[(v_i_53147 + (512 * v_MWidthC_1 * v_wg_id_53145) + (v_MWidthC_1 * v_l_id_53146))]; \n        if (v_index_53213 < 0) {\n          v__53160_0 = v__53158; \n        } else {\n          if (v_index_53213 >= v_VLength_3) {\n            v__53160_0 = v__53158; \n          } else {\n            v__53160_0 = v__53152[v_index_53213]; \n          }\n        }\n        v__53162[(v_i_53147 + (512 * v_MWidthC_1 * v_wg_id_53145) + (v_MWidthC_1 * v_l_id_53146))] = bool_and(v__53160_0, v__53151[(v_i_53147 + (512 * v_MWidthC_1 * v_wg_id_53145) + (v_MWidthC_1 * v_l_id_53146))]); \n      }\n      /* end map_seq */\n      int v_tmp_53214 = 0; \n      v__53163 = v_tmp_53214; \n      /* reduce_seq */\n      for (int v_i_53148 = 0; v_i_53148 < v_MWidthC_1; v_i_53148 = (1 + v_i_53148)) {\n        v__53163 = bool_or(v__53163, v__53162[(v_i_53148 + (512 * v_MWidthC_1 * v_wg_id_53145) + (v_MWidthC_1 * v_l_id_53146))]); \n      }\n      /* end reduce_seq */\n      /* map_seq */\n      /* iteration count is exactly 1, no loop emitted */\n      {\n        int v_i_53149 = 0; \n        v__53168[(v_l_id_53146 + (512 * v_wg_id_53145))] = doubleAndOr(v__53163, v__53154, v__53153[(v_l_id_53146 + (512 * v_wg_id_53145))], v__53155); \n      }\n      /* end map_seq */\n    }\n  }\n}}\n\n",
+  "properties" : {
+    "outerMap" : "swrg",
+    "innerMap" : "slcl",
+    "chunkSize" : "512",
+    "dotProduct" : "seq"
+  },
+  "inputArgs" : [ {
+    "variable" : "v__53150",
+    "addressSpace" : "global",
+    "size" : "(2048*v_MHeight_2*v_MWidthC_1)"
+  }, {
+    "variable" : "v__53151",
+    "addressSpace" : "global",
+    "size" : "(2048*v_MHeight_2*v_MWidthC_1)"
+  }, {
+    "variable" : "v__53152",
+    "addressSpace" : "global",
+    "size" : "(4*v_VLength_3)"
+  }, {
+    "variable" : "v__53153",
+    "addressSpace" : "global",
+    "size" : "(2048*v_MHeight_2)"
+  }, {
+    "variable" : "v__53154",
+    "addressSpace" : "private",
+    "size" : "4"
+  }, {
+    "variable" : "v__53155",
+    "addressSpace" : "private",
+    "size" : "4"
+  } ],
+  "tempGlobals" : [ {
+    "variable" : "v__53162",
+    "addressSpace" : "global",
+    "size" : "(2048*v_MHeight_2*v_MWidthC_1)"
+  } ],
+  "outputArg" : {
+    "variable" : "v__53168",
+    "addressSpace" : "global",
+    "size" : "(2048*v_MHeight_2)"
+  },
+  "tempLocals" : [ ],
+  "paramVars" : [ "MWidthC", "MHeight", "VLength" ]
+}

@@ -1,0 +1,47 @@
+{
+  "name" : "awrg-slcl-fdp-chunk-8",
+  "source" : "#ifndef Tuple2_int_int_DEFINED\n#define Tuple2_int_int_DEFINED\ntypedef struct {\n  int _0;\n  int _1;\n} Tuple2_int_int;\n#endif\n\nint bool_or(int a, int b){\n  { if((a != 0) || (b != 0 )){ return 1; }else{ return 0; } }\n}\nint bool_and(int a, int b){\n  { if((a != 0) && (b != 0 )){ return 1; }else{ return 0; } }\n}\nint doubleAndOr(int dpRes, int alpha, int rowIdxPair2, int beta){\n  \n{\n int OrRes1;\n if((dpRes != 0) && (alpha !=0)) {\n   OrRes1 = 1;\n } else {\n   OrRes1 = 0;\n }\n int OrRes2;\n if((rowIdxPair2 != 0) && (beta !=0)) {\n   OrRes2 = 1;\n } else {\n   OrRes2 = 0;\n }\n return (OrRes1 || OrRes2);\n}\n    \n}\nkernel void KERNEL(const global int* restrict v__34896, const global int* restrict v__34897, const global int* restrict v__34898, const global int* restrict v__34899, int v__34900, int v__34901, global int* v__34915, global int* v__34903, int v_MHeight_2, int v_MWidthC_1, int v_VLength_3){ \n#ifndef WORKGROUP_GUARD\n#define WORKGROUP_GUARD\n#endif\nWORKGROUP_GUARD\n{\n  /* Static local memory */\n  /* Typed Value memory */\n  int v__34905; \n  int v__34907; \n  /* Private Memory */\n  int v__34909_0;\n  \n  int v__34911_0;\n  \n  /* atomic_workgroup_map */\n  {\n    global int* v_work_idx_2424 = v__34903; \n    local int v_w_id_34892; \n    if (get_local_id(0) == 0) {\n      v_w_id_34892 = atomic_inc(v_work_idx_2424); \n    }\n    barrier(CLK_LOCAL_MEM_FENCE);\n    \n    while((v_w_id_34892 < v_MHeight_2)){\n      for (int v_l_id_34893 = get_local_id(0); v_l_id_34893 < 8; v_l_id_34893 = (v_l_id_34893 + get_local_size(0))) {\n        int v_tmp_34956 = 0; \n        v__34905 = v_tmp_34956; \n        /* reduce_seq */\n        for (int v_i_34894 = 0; v_i_34894 < v_MWidthC_1; v_i_34894 = (1 + v_i_34894)) {\n          int v_tmp_34957 = 0; \n          v__34907 = v_tmp_34957; \n          int v_index_34958 = v__34896[(v_i_34894 + (8 * v_MWidthC_1 * v_w_id_34892) + (v_MWidthC_1 * v_l_id_34893))]; \n          if (v_index_34958 < 0) {\n            v__34909_0 = v__34907; \n          } else {\n            if (v_index_34958 >= v_VLength_3) {\n              v__34909_0 = v__34907; \n            } else {\n              v__34909_0 = v__34898[v_index_34958]; \n            }\n          }\n          v__34911_0 = bool_and(v__34909_0, v__34897[(v_i_34894 + (8 * v_MWidthC_1 * v_w_id_34892) + (v_MWidthC_1 * v_l_id_34893))]); \n          v__34905 = bool_or(v__34911_0, v__34905); \n        }\n        /* end reduce_seq */\n        /* map_seq */\n        /* iteration count is exactly 1, no loop emitted */\n        {\n          int v_i_34895 = 0; \n          v__34915[(v_l_id_34893 + (8 * v_w_id_34892))] = doubleAndOr(v__34905, v__34900, v__34899[(v_l_id_34893 + (8 * v_w_id_34892))], v__34901); \n        }\n        /* end map_seq */\n      }\n      if (get_local_id(0) == 0) {\n        v_w_id_34892 = atomic_inc(v_work_idx_2424); \n      }\n      barrier(CLK_LOCAL_MEM_FENCE);\n      \n    }\n  }\n  barrier(CLK_GLOBAL_MEM_FENCE);\n  \n}}\n\n",
+  "properties" : {
+    "outerMap" : "awrg",
+    "innerMap" : "slcl",
+    "chunkSize" : "8",
+    "dotProduct" : "fused"
+  },
+  "inputArgs" : [ {
+    "variable" : "v__34896",
+    "addressSpace" : "global",
+    "size" : "(32*v_MHeight_2*v_MWidthC_1)"
+  }, {
+    "variable" : "v__34897",
+    "addressSpace" : "global",
+    "size" : "(32*v_MHeight_2*v_MWidthC_1)"
+  }, {
+    "variable" : "v__34898",
+    "addressSpace" : "global",
+    "size" : "(4*v_VLength_3)"
+  }, {
+    "variable" : "v__34899",
+    "addressSpace" : "global",
+    "size" : "(32*v_MHeight_2)"
+  }, {
+    "variable" : "v__34900",
+    "addressSpace" : "private",
+    "size" : "4"
+  }, {
+    "variable" : "v__34901",
+    "addressSpace" : "private",
+    "size" : "4"
+  } ],
+  "tempGlobals" : [ {
+    "variable" : "v__34903",
+    "addressSpace" : "global",
+    "size" : "4"
+  } ],
+  "outputArg" : {
+    "variable" : "v__34915",
+    "addressSpace" : "global",
+    "size" : "(32*v_MHeight_2)"
+  },
+  "tempLocals" : [ ],
+  "paramVars" : [ "MWidthC", "MHeight", "VLength" ]
+}

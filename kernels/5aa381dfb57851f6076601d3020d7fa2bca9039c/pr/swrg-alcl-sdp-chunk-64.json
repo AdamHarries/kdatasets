@@ -1,0 +1,47 @@
+{
+  "name" : "swrg-alcl-sdp-chunk-64",
+  "source" : "#ifndef Tuple2_int_float_DEFINED\n#define Tuple2_int_float_DEFINED\ntypedef struct {\n  int _0;\n  float _1;\n} Tuple2_int_float;\n#endif\n\nfloat mult(float l, float r){\n  { return l * r; }\n}\nfloat add(float x, float y){\n  { return x+y; }\n}\nfloat doubleMultiplyAdd(float dpRes, float alpha, float rowIdxPair2, float beta){\n  {return (dpRes*alpha)+(rowIdxPair2*beta);}\n}\nkernel void KERNEL(const global int* restrict v__91592, const global float* restrict v__91593, const global float* restrict v__91594, const global float* restrict v__91595, float v__91596, float v__91597, global float* v__91610, global float* v__91604, int v_MHeight_2, int v_MWidthC_1, int v_VLength_3){ \n#ifndef WORKGROUP_GUARD\n#define WORKGROUP_GUARD\n#endif\nWORKGROUP_GUARD\n{\n  /* Static local memory */\n  /* Typed Value memory */\n  float v__91600; \n  float v__91605; \n  /* Private Memory */\n  float v__91602_0;\n  \n  for (int v_wg_id_91587 = get_group_id(0); v_wg_id_91587 < v_MHeight_2; v_wg_id_91587 = (v_wg_id_91587 + get_num_groups(0))) {\n    /* atomic_local_map */\n    {\n      local int v_work_idx_7721; \n      v_work_idx_7721 = 0; \n      barrier(CLK_LOCAL_MEM_FENCE);\n      \n      int v_l_id_91588 = atomic_inc(&(v_work_idx_7721)); \n      while((v_l_id_91588 < 64)){\n        /* map_seq */\n        for (int v_i_91589 = 0; v_i_91589 < v_MWidthC_1; v_i_91589 = (1 + v_i_91589)) {\n          float v_tmp_91650 = 0.0f; \n          v__91600 = v_tmp_91650; \n          int v_index_91651 = v__91592[(v_i_91589 + (64 * v_MWidthC_1 * v_wg_id_91587) + (v_MWidthC_1 * v_l_id_91588))]; \n          if (v_index_91651 < 0) {\n            v__91602_0 = v__91600; \n          } else {\n            if (v_index_91651 >= v_VLength_3) {\n              v__91602_0 = v__91600; \n            } else {\n              v__91602_0 = v__91594[v_index_91651]; \n            }\n          }\n          v__91604[(v_i_91589 + (64 * v_MWidthC_1 * v_wg_id_91587) + (v_MWidthC_1 * v_l_id_91588))] = mult(v__91602_0, v__91593[(v_i_91589 + (64 * v_MWidthC_1 * v_wg_id_91587) + (v_MWidthC_1 * v_l_id_91588))]); \n        }\n        /* end map_seq */\n        float v_tmp_91652 = 0.0f; \n        v__91605 = v_tmp_91652; \n        /* reduce_seq */\n        for (int v_i_91590 = 0; v_i_91590 < v_MWidthC_1; v_i_91590 = (1 + v_i_91590)) {\n          v__91605 = add(v__91605, v__91604[(v_i_91590 + (64 * v_MWidthC_1 * v_wg_id_91587) + (v_MWidthC_1 * v_l_id_91588))]); \n        }\n        /* end reduce_seq */\n        /* map_seq */\n        /* iteration count is exactly 1, no loop emitted */\n        {\n          int v_i_91591 = 0; \n          v__91610[(v_l_id_91588 + (64 * v_wg_id_91587))] = doubleMultiplyAdd(v__91605, v__91596, v__91595[(v_l_id_91588 + (64 * v_wg_id_91587))], v__91597); \n        }\n        /* end map_seq */\n        v_l_id_91588 = atomic_inc(&(v_work_idx_7721)); \n      }\n    }\n    barrier(CLK_GLOBAL_MEM_FENCE);\n    \n  }\n}}\n\n",
+  "properties" : {
+    "outerMap" : "swrg",
+    "innerMap" : "alcl",
+    "chunkSize" : "64",
+    "dotProduct" : "seq"
+  },
+  "inputArgs" : [ {
+    "variable" : "v__91592",
+    "addressSpace" : "global",
+    "size" : "(256*v_MHeight_2*v_MWidthC_1)"
+  }, {
+    "variable" : "v__91593",
+    "addressSpace" : "global",
+    "size" : "(256*v_MHeight_2*v_MWidthC_1)"
+  }, {
+    "variable" : "v__91594",
+    "addressSpace" : "global",
+    "size" : "(4*v_VLength_3)"
+  }, {
+    "variable" : "v__91595",
+    "addressSpace" : "global",
+    "size" : "(256*v_MHeight_2)"
+  }, {
+    "variable" : "v__91596",
+    "addressSpace" : "private",
+    "size" : "4"
+  }, {
+    "variable" : "v__91597",
+    "addressSpace" : "private",
+    "size" : "4"
+  } ],
+  "tempGlobals" : [ {
+    "variable" : "v__91604",
+    "addressSpace" : "global",
+    "size" : "(256*v_MHeight_2*v_MWidthC_1)"
+  } ],
+  "outputArg" : {
+    "variable" : "v__91610",
+    "addressSpace" : "global",
+    "size" : "(256*v_MHeight_2)"
+  },
+  "tempLocals" : [ ],
+  "paramVars" : [ "MWidthC", "MHeight", "VLength" ]
+}

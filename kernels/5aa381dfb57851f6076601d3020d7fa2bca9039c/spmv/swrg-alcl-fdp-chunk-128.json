@@ -1,0 +1,43 @@
+{
+  "name" : "swrg-alcl-fdp-chunk-128",
+  "source" : "#ifndef Tuple2_int_float_DEFINED\n#define Tuple2_int_float_DEFINED\ntypedef struct {\n  int _0;\n  float _1;\n} Tuple2_int_float;\n#endif\n\nfloat add(float x, float y){\n  \n//printf(\"x: %f, y: %f\\n\", x, y);\nreturn x+y;\n    \n}\nfloat mult(float l, float r){\n  \n//printf(\"l (vect): %f, r (matrix): %f\\n\", l, r);\nreturn l*r;\n    \n}\nfloat doubleMultiplyAdd(float dpRes, float alpha, float rowIdxPair2, float beta){\n  \n{\n //printf(\"dpRes: %f, alpha: %f, rowIdxPair2: %f, beta: %f\\n\", dpRes,alpha,rowIdxPair2, beta);\n return (dpRes*alpha)+(rowIdxPair2*beta);\n}\n    \n}\nkernel void KERNEL(const global int* restrict v__23633, const global float* restrict v__23634, const global float* restrict v__23635, const global float* restrict v__23636, float v__23637, float v__23638, global float* v__23651, int v_MHeight_2, int v_MWidthC_1, int v_VLength_3){ \n#ifndef WORKGROUP_GUARD\n#define WORKGROUP_GUARD\n#endif\nWORKGROUP_GUARD\n{\n  /* Static local memory */\n  /* Typed Value memory */\n  float v__23641; \n  float v__23643; \n  /* Private Memory */\n  float v__23645_0;\n  \n  float v__23647_0;\n  \n  for (int v_wg_id_23629 = get_group_id(0); v_wg_id_23629 < v_MHeight_2; v_wg_id_23629 = (v_wg_id_23629 + get_num_groups(0))) {\n    /* atomic_local_map */\n    {\n      local int v_work_idx_1370; \n      v_work_idx_1370 = 0; \n      barrier(CLK_LOCAL_MEM_FENCE);\n      \n      int v_l_id_23630 = atomic_inc(&(v_work_idx_1370)); \n      while((v_l_id_23630 < 128)){\n        float v_tmp_23690 = 0.0f; \n        v__23641 = v_tmp_23690; \n        /* reduce_seq */\n        for (int v_i_23631 = 0; v_i_23631 < v_MWidthC_1; v_i_23631 = (1 + v_i_23631)) {\n          float v_tmp_23691 = 0.0f; \n          v__23643 = v_tmp_23691; \n          int v_index_23692 = v__23633[(v_i_23631 + (128 * v_MWidthC_1 * v_wg_id_23629) + (v_MWidthC_1 * v_l_id_23630))]; \n          if (v_index_23692 < 0) {\n            v__23645_0 = v__23643; \n          } else {\n            if (v_index_23692 >= v_VLength_3) {\n              v__23645_0 = v__23643; \n            } else {\n              v__23645_0 = v__23635[v_index_23692]; \n            }\n          }\n          v__23647_0 = mult(v__23645_0, v__23634[(v_i_23631 + (128 * v_MWidthC_1 * v_wg_id_23629) + (v_MWidthC_1 * v_l_id_23630))]); \n          v__23641 = add(v__23647_0, v__23641); \n        }\n        /* end reduce_seq */\n        /* map_seq */\n        /* iteration count is exactly 1, no loop emitted */\n        {\n          int v_i_23632 = 0; \n          v__23651[(v_l_id_23630 + (128 * v_wg_id_23629))] = doubleMultiplyAdd(v__23641, v__23637, v__23636[(v_l_id_23630 + (128 * v_wg_id_23629))], v__23638); \n        }\n        /* end map_seq */\n        v_l_id_23630 = atomic_inc(&(v_work_idx_1370)); \n      }\n    }\n    barrier(CLK_GLOBAL_MEM_FENCE);\n    \n  }\n}}\n\n",
+  "properties" : {
+    "outerMap" : "swrg",
+    "innerMap" : "alcl",
+    "chunkSize" : "128",
+    "dotProduct" : "fused"
+  },
+  "inputArgs" : [ {
+    "variable" : "v__23633",
+    "addressSpace" : "global",
+    "size" : "(512*v_MHeight_2*v_MWidthC_1)"
+  }, {
+    "variable" : "v__23634",
+    "addressSpace" : "global",
+    "size" : "(512*v_MHeight_2*v_MWidthC_1)"
+  }, {
+    "variable" : "v__23635",
+    "addressSpace" : "global",
+    "size" : "(4*v_VLength_3)"
+  }, {
+    "variable" : "v__23636",
+    "addressSpace" : "global",
+    "size" : "(512*v_MHeight_2)"
+  }, {
+    "variable" : "v__23637",
+    "addressSpace" : "private",
+    "size" : "4"
+  }, {
+    "variable" : "v__23638",
+    "addressSpace" : "private",
+    "size" : "4"
+  } ],
+  "tempGlobals" : [ ],
+  "outputArg" : {
+    "variable" : "v__23651",
+    "addressSpace" : "global",
+    "size" : "(512*v_MHeight_2)"
+  },
+  "tempLocals" : [ ],
+  "paramVars" : [ "MWidthC", "MHeight", "VLength" ]
+}

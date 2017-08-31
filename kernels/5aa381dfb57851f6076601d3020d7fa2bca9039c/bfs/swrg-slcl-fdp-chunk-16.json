@@ -1,0 +1,43 @@
+{
+  "name" : "swrg-slcl-fdp-chunk-16",
+  "source" : "#ifndef Tuple2_int_int_DEFINED\n#define Tuple2_int_int_DEFINED\ntypedef struct {\n  int _0;\n  int _1;\n} Tuple2_int_int;\n#endif\n\nint bool_or(int a, int b){\n  { if((a != 0) || (b != 0 )){ return 1; }else{ return 0; } }\n}\nint bool_and(int a, int b){\n  { if((a != 0) && (b != 0 )){ return 1; }else{ return 0; } }\n}\nint doubleAndOr(int dpRes, int alpha, int rowIdxPair2, int beta){\n  \n{\n int OrRes1;\n if((dpRes != 0) && (alpha !=0)) {\n   OrRes1 = 1;\n } else {\n   OrRes1 = 0;\n }\n int OrRes2;\n if((rowIdxPair2 != 0) && (beta !=0)) {\n   OrRes2 = 1;\n } else {\n   OrRes2 = 0;\n }\n return (OrRes1 || OrRes2);\n}\n    \n}\nkernel void KERNEL(const global int* restrict v__36555, const global int* restrict v__36556, const global int* restrict v__36557, const global int* restrict v__36558, int v__36559, int v__36560, global int* v__36573, int v_MHeight_2, int v_MWidthC_1, int v_VLength_3){ \n#ifndef WORKGROUP_GUARD\n#define WORKGROUP_GUARD\n#endif\nWORKGROUP_GUARD\n{\n  /* Static local memory */\n  /* Typed Value memory */\n  int v__36563; \n  int v__36565; \n  /* Private Memory */\n  int v__36567_0;\n  \n  int v__36569_0;\n  \n  for (int v_wg_id_36551 = get_group_id(0); v_wg_id_36551 < v_MHeight_2; v_wg_id_36551 = (v_wg_id_36551 + get_num_groups(0))) {\n    for (int v_l_id_36552 = get_local_id(0); v_l_id_36552 < 16; v_l_id_36552 = (v_l_id_36552 + get_local_size(0))) {\n      int v_tmp_36616 = 0; \n      v__36563 = v_tmp_36616; \n      /* reduce_seq */\n      for (int v_i_36553 = 0; v_i_36553 < v_MWidthC_1; v_i_36553 = (1 + v_i_36553)) {\n        int v_tmp_36617 = 0; \n        v__36565 = v_tmp_36617; \n        int v_index_36618 = v__36555[(v_i_36553 + (16 * v_MWidthC_1 * v_wg_id_36551) + (v_MWidthC_1 * v_l_id_36552))]; \n        if (v_index_36618 < 0) {\n          v__36567_0 = v__36565; \n        } else {\n          if (v_index_36618 >= v_VLength_3) {\n            v__36567_0 = v__36565; \n          } else {\n            v__36567_0 = v__36557[v_index_36618]; \n          }\n        }\n        v__36569_0 = bool_and(v__36567_0, v__36556[(v_i_36553 + (16 * v_MWidthC_1 * v_wg_id_36551) + (v_MWidthC_1 * v_l_id_36552))]); \n        v__36563 = bool_or(v__36569_0, v__36563); \n      }\n      /* end reduce_seq */\n      /* map_seq */\n      /* iteration count is exactly 1, no loop emitted */\n      {\n        int v_i_36554 = 0; \n        v__36573[(v_l_id_36552 + (16 * v_wg_id_36551))] = doubleAndOr(v__36563, v__36559, v__36558[(v_l_id_36552 + (16 * v_wg_id_36551))], v__36560); \n      }\n      /* end map_seq */\n    }\n  }\n}}\n\n",
+  "properties" : {
+    "outerMap" : "swrg",
+    "innerMap" : "slcl",
+    "chunkSize" : "16",
+    "dotProduct" : "fused"
+  },
+  "inputArgs" : [ {
+    "variable" : "v__36555",
+    "addressSpace" : "global",
+    "size" : "(64*v_MHeight_2*v_MWidthC_1)"
+  }, {
+    "variable" : "v__36556",
+    "addressSpace" : "global",
+    "size" : "(64*v_MHeight_2*v_MWidthC_1)"
+  }, {
+    "variable" : "v__36557",
+    "addressSpace" : "global",
+    "size" : "(4*v_VLength_3)"
+  }, {
+    "variable" : "v__36558",
+    "addressSpace" : "global",
+    "size" : "(64*v_MHeight_2)"
+  }, {
+    "variable" : "v__36559",
+    "addressSpace" : "private",
+    "size" : "4"
+  }, {
+    "variable" : "v__36560",
+    "addressSpace" : "private",
+    "size" : "4"
+  } ],
+  "tempGlobals" : [ ],
+  "outputArg" : {
+    "variable" : "v__36573",
+    "addressSpace" : "global",
+    "size" : "(64*v_MHeight_2)"
+  },
+  "tempLocals" : [ ],
+  "paramVars" : [ "MWidthC", "MHeight", "VLength" ]
+}

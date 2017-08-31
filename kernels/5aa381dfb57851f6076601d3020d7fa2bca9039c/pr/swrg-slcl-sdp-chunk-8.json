@@ -1,0 +1,47 @@
+{
+  "name" : "swrg-slcl-sdp-chunk-8",
+  "source" : "#ifndef Tuple2_int_float_DEFINED\n#define Tuple2_int_float_DEFINED\ntypedef struct {\n  int _0;\n  float _1;\n} Tuple2_int_float;\n#endif\n\nfloat mult(float l, float r){\n  { return l * r; }\n}\nfloat add(float x, float y){\n  { return x+y; }\n}\nfloat doubleMultiplyAdd(float dpRes, float alpha, float rowIdxPair2, float beta){\n  {return (dpRes*alpha)+(rowIdxPair2*beta);}\n}\nkernel void KERNEL(const global int* restrict v__80721, const global float* restrict v__80722, const global float* restrict v__80723, const global float* restrict v__80724, float v__80725, float v__80726, global float* v__80739, global float* v__80733, int v_MHeight_2, int v_MWidthC_1, int v_VLength_3){ \n#ifndef WORKGROUP_GUARD\n#define WORKGROUP_GUARD\n#endif\nWORKGROUP_GUARD\n{\n  /* Static local memory */\n  /* Typed Value memory */\n  float v__80729; \n  float v__80734; \n  /* Private Memory */\n  float v__80731_0;\n  \n  for (int v_wg_id_80716 = get_group_id(0); v_wg_id_80716 < v_MHeight_2; v_wg_id_80716 = (v_wg_id_80716 + get_num_groups(0))) {\n    for (int v_l_id_80717 = get_local_id(0); v_l_id_80717 < 8; v_l_id_80717 = (v_l_id_80717 + get_local_size(0))) {\n      /* map_seq */\n      for (int v_i_80718 = 0; v_i_80718 < v_MWidthC_1; v_i_80718 = (1 + v_i_80718)) {\n        float v_tmp_80783 = 0.0f; \n        v__80729 = v_tmp_80783; \n        int v_index_80784 = v__80721[(v_i_80718 + (8 * v_MWidthC_1 * v_wg_id_80716) + (v_MWidthC_1 * v_l_id_80717))]; \n        if (v_index_80784 < 0) {\n          v__80731_0 = v__80729; \n        } else {\n          if (v_index_80784 >= v_VLength_3) {\n            v__80731_0 = v__80729; \n          } else {\n            v__80731_0 = v__80723[v_index_80784]; \n          }\n        }\n        v__80733[(v_i_80718 + (8 * v_MWidthC_1 * v_wg_id_80716) + (v_MWidthC_1 * v_l_id_80717))] = mult(v__80731_0, v__80722[(v_i_80718 + (8 * v_MWidthC_1 * v_wg_id_80716) + (v_MWidthC_1 * v_l_id_80717))]); \n      }\n      /* end map_seq */\n      float v_tmp_80785 = 0.0f; \n      v__80734 = v_tmp_80785; \n      /* reduce_seq */\n      for (int v_i_80719 = 0; v_i_80719 < v_MWidthC_1; v_i_80719 = (1 + v_i_80719)) {\n        v__80734 = add(v__80734, v__80733[(v_i_80719 + (8 * v_MWidthC_1 * v_wg_id_80716) + (v_MWidthC_1 * v_l_id_80717))]); \n      }\n      /* end reduce_seq */\n      /* map_seq */\n      /* iteration count is exactly 1, no loop emitted */\n      {\n        int v_i_80720 = 0; \n        v__80739[(v_l_id_80717 + (8 * v_wg_id_80716))] = doubleMultiplyAdd(v__80734, v__80725, v__80724[(v_l_id_80717 + (8 * v_wg_id_80716))], v__80726); \n      }\n      /* end map_seq */\n    }\n  }\n}}\n\n",
+  "properties" : {
+    "outerMap" : "swrg",
+    "innerMap" : "slcl",
+    "chunkSize" : "8",
+    "dotProduct" : "seq"
+  },
+  "inputArgs" : [ {
+    "variable" : "v__80721",
+    "addressSpace" : "global",
+    "size" : "(32*v_MHeight_2*v_MWidthC_1)"
+  }, {
+    "variable" : "v__80722",
+    "addressSpace" : "global",
+    "size" : "(32*v_MHeight_2*v_MWidthC_1)"
+  }, {
+    "variable" : "v__80723",
+    "addressSpace" : "global",
+    "size" : "(4*v_VLength_3)"
+  }, {
+    "variable" : "v__80724",
+    "addressSpace" : "global",
+    "size" : "(32*v_MHeight_2)"
+  }, {
+    "variable" : "v__80725",
+    "addressSpace" : "private",
+    "size" : "4"
+  }, {
+    "variable" : "v__80726",
+    "addressSpace" : "private",
+    "size" : "4"
+  } ],
+  "tempGlobals" : [ {
+    "variable" : "v__80733",
+    "addressSpace" : "global",
+    "size" : "(32*v_MHeight_2*v_MWidthC_1)"
+  } ],
+  "outputArg" : {
+    "variable" : "v__80739",
+    "addressSpace" : "global",
+    "size" : "(32*v_MHeight_2)"
+  },
+  "tempLocals" : [ ],
+  "paramVars" : [ "MWidthC", "MHeight", "VLength" ]
+}

@@ -1,0 +1,47 @@
+{
+  "name" : "awrg-slcl-fdp-chunk-128",
+  "source" : "#ifndef Tuple2_int_float_DEFINED\n#define Tuple2_int_float_DEFINED\ntypedef struct {\n  int _0;\n  float _1;\n} Tuple2_int_float;\n#endif\n\nfloat clmin(float a, float b){\n  { return fabs(a) < fabs(b) ? fabs(a) : fabs(b); }\n}\nfloat absadd(float a, float b){\n  { return fabs(a) + fabs(b); }\n}\nfloat doubleMultiplyAdd(float dpRes, float alpha, float rowIdxPair2, float beta){\n  \n{\n  float a = fabs(dpRes) + fabs(alpha);\n  float b = fabs(rowIdxPair2) + fabs(beta);\n  return fabs(a) < fabs(b) ? fabs(a) : fabs(b);\n}\n    \n}\nkernel void KERNEL(const global int* restrict v__72020, const global float* restrict v__72021, const global float* restrict v__72022, const global float* restrict v__72023, float v__72024, float v__72025, global float* v__72039, global int* v__72027, int v_MHeight_2, int v_MWidthC_1, int v_VLength_3){ \n#ifndef WORKGROUP_GUARD\n#define WORKGROUP_GUARD\n#endif\nWORKGROUP_GUARD\n{\n  /* Static local memory */\n  /* Typed Value memory */\n  float v__72029; \n  float v__72031; \n  /* Private Memory */\n  float v__72033_0;\n  \n  float v__72035_0;\n  \n  /* atomic_workgroup_map */\n  {\n    global int* v_work_idx_5895 = v__72027; \n    local int v_w_id_72016; \n    if (get_local_id(0) == 0) {\n      v_w_id_72016 = atomic_inc(v_work_idx_5895); \n    }\n    barrier(CLK_LOCAL_MEM_FENCE);\n    \n    while((v_w_id_72016 < v_MHeight_2)){\n      for (int v_l_id_72017 = get_local_id(0); v_l_id_72017 < 128; v_l_id_72017 = (v_l_id_72017 + get_local_size(0))) {\n        float v_tmp_72080 = 3.4028235E38f; \n        v__72029 = v_tmp_72080; \n        /* reduce_seq */\n        for (int v_i_72018 = 0; v_i_72018 < v_MWidthC_1; v_i_72018 = (1 + v_i_72018)) {\n          float v_tmp_72081 = 3.4028235E38f; \n          v__72031 = v_tmp_72081; \n          int v_index_72082 = v__72020[(v_i_72018 + (128 * v_MWidthC_1 * v_w_id_72016) + (v_MWidthC_1 * v_l_id_72017))]; \n          if (v_index_72082 < 0) {\n            v__72033_0 = v__72031; \n          } else {\n            if (v_index_72082 >= v_VLength_3) {\n              v__72033_0 = v__72031; \n            } else {\n              v__72033_0 = v__72022[v_index_72082]; \n            }\n          }\n          v__72035_0 = absadd(v__72033_0, v__72021[(v_i_72018 + (128 * v_MWidthC_1 * v_w_id_72016) + (v_MWidthC_1 * v_l_id_72017))]); \n          v__72029 = clmin(v__72035_0, v__72029); \n        }\n        /* end reduce_seq */\n        /* map_seq */\n        /* iteration count is exactly 1, no loop emitted */\n        {\n          int v_i_72019 = 0; \n          v__72039[(v_l_id_72017 + (128 * v_w_id_72016))] = doubleMultiplyAdd(v__72029, v__72024, v__72023[(v_l_id_72017 + (128 * v_w_id_72016))], v__72025); \n        }\n        /* end map_seq */\n      }\n      if (get_local_id(0) == 0) {\n        v_w_id_72016 = atomic_inc(v_work_idx_5895); \n      }\n      barrier(CLK_LOCAL_MEM_FENCE);\n      \n    }\n  }\n  barrier(CLK_GLOBAL_MEM_FENCE);\n  \n}}\n\n",
+  "properties" : {
+    "outerMap" : "awrg",
+    "innerMap" : "slcl",
+    "chunkSize" : "128",
+    "dotProduct" : "fused"
+  },
+  "inputArgs" : [ {
+    "variable" : "v__72020",
+    "addressSpace" : "global",
+    "size" : "(512*v_MHeight_2*v_MWidthC_1)"
+  }, {
+    "variable" : "v__72021",
+    "addressSpace" : "global",
+    "size" : "(512*v_MHeight_2*v_MWidthC_1)"
+  }, {
+    "variable" : "v__72022",
+    "addressSpace" : "global",
+    "size" : "(4*v_VLength_3)"
+  }, {
+    "variable" : "v__72023",
+    "addressSpace" : "global",
+    "size" : "(512*v_MHeight_2)"
+  }, {
+    "variable" : "v__72024",
+    "addressSpace" : "private",
+    "size" : "4"
+  }, {
+    "variable" : "v__72025",
+    "addressSpace" : "private",
+    "size" : "4"
+  } ],
+  "tempGlobals" : [ {
+    "variable" : "v__72027",
+    "addressSpace" : "global",
+    "size" : "4"
+  } ],
+  "outputArg" : {
+    "variable" : "v__72039",
+    "addressSpace" : "global",
+    "size" : "(512*v_MHeight_2)"
+  },
+  "tempLocals" : [ ],
+  "paramVars" : [ "MWidthC", "MHeight", "VLength" ]
+}

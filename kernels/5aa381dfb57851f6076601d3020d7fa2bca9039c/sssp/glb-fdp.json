@@ -1,0 +1,41 @@
+{
+  "name" : "glb-fdp",
+  "source" : "#ifndef Tuple2_int_float_DEFINED\n#define Tuple2_int_float_DEFINED\ntypedef struct {\n  int _0;\n  float _1;\n} Tuple2_int_float;\n#endif\n\nfloat clmin(float a, float b){\n  { return fabs(a) < fabs(b) ? fabs(a) : fabs(b); }\n}\nfloat absadd(float a, float b){\n  { return fabs(a) + fabs(b); }\n}\nfloat doubleMultiplyAdd(float dpRes, float alpha, float rowIdxPair2, float beta){\n  \n{\n  float a = fabs(dpRes) + fabs(alpha);\n  float b = fabs(rowIdxPair2) + fabs(beta);\n  return fabs(a) < fabs(b) ? fabs(a) : fabs(b);\n}\n    \n}\nkernel void KERNEL(const global int* restrict v__56544, const global float* restrict v__56545, const global float* restrict v__56546, const global float* restrict v__56547, float v__56548, float v__56549, global float* v__56562, int v_MHeight_2, int v_MWidthC_1, int v_VLength_3){ \n#ifndef WORKGROUP_GUARD\n#define WORKGROUP_GUARD\n#endif\nWORKGROUP_GUARD\n{\n  /* Static local memory */\n  /* Typed Value memory */\n  float v__56552; \n  float v__56554; \n  /* Private Memory */\n  float v__56556; \n  float v__56558; \n  for (int v_gl_id_56541 = get_global_id(0); v_gl_id_56541 < v_MHeight_2; v_gl_id_56541 = (v_gl_id_56541 + get_global_size(0))) {\n    float v_tmp_56592 = 3.4028235E38f; \n    v__56552 = v_tmp_56592; \n    /* reduce_seq */\n    for (int v_i_56542 = 0; v_i_56542 < v_MWidthC_1; v_i_56542 = (1 + v_i_56542)) {\n      float v_tmp_56593 = 3.4028235E38f; \n      v__56554 = v_tmp_56593; \n      int v_index_56594 = v__56544[(v_i_56542 + (v_MWidthC_1 * v_gl_id_56541))]; \n      if (v_index_56594 < 0) {\n        v__56556 = v__56554; \n      } else {\n        if (v_index_56594 >= v_VLength_3) {\n          v__56556 = v__56554; \n        } else {\n          v__56556 = v__56546[v_index_56594]; \n        }\n      }\n      v__56558 = absadd(v__56556, v__56545[(v_i_56542 + (v_MWidthC_1 * v_gl_id_56541))]); \n      v__56552 = clmin(v__56558, v__56552); \n    }\n    /* end reduce_seq */\n    /* map_seq */\n    /* iteration count is exactly 1, no loop emitted */\n    {\n      int v_i_56543 = 0; \n      v__56562[v_gl_id_56541] = doubleMultiplyAdd(v__56552, v__56548, v__56547[v_gl_id_56541], v__56549); \n    }\n    /* end map_seq */\n  }\n}}\n\n",
+  "properties" : {
+    "outerMap" : "sglb",
+    "dotProduct" : "fused"
+  },
+  "inputArgs" : [ {
+    "variable" : "v__56544",
+    "addressSpace" : "global",
+    "size" : "(4*v_MHeight_2*v_MWidthC_1)"
+  }, {
+    "variable" : "v__56545",
+    "addressSpace" : "global",
+    "size" : "(4*v_MHeight_2*v_MWidthC_1)"
+  }, {
+    "variable" : "v__56546",
+    "addressSpace" : "global",
+    "size" : "(4*v_VLength_3)"
+  }, {
+    "variable" : "v__56547",
+    "addressSpace" : "global",
+    "size" : "(4*v_MHeight_2)"
+  }, {
+    "variable" : "v__56548",
+    "addressSpace" : "private",
+    "size" : "4"
+  }, {
+    "variable" : "v__56549",
+    "addressSpace" : "private",
+    "size" : "4"
+  } ],
+  "tempGlobals" : [ ],
+  "outputArg" : {
+    "variable" : "v__56562",
+    "addressSpace" : "global",
+    "size" : "(4*v_MHeight_2)"
+  },
+  "tempLocals" : [ ],
+  "paramVars" : [ "MWidthC", "MHeight", "VLength" ]
+}

@@ -1,0 +1,41 @@
+{
+  "name" : "glb-edp",
+  "source" : "#ifndef Tuple2_int_int_DEFINED\n#define Tuple2_int_int_DEFINED\ntypedef struct {\n  int _0;\n  int _1;\n} Tuple2_int_int;\n#endif\n\nint bool_or(int a, int b){\n  { if((a != 0) || (b != 0 )){ return 1; }else{ return 0; } }\n}\nint bool_and(int a, int b){\n  { if((a != 0) && (b != 0 )){ return 1; }else{ return 0; } }\n}\nint check(int acc, int v){\n  { return (v == -1); }\n}\nint doubleAndOr(int dpRes, int alpha, int rowIdxPair2, int beta){\n  \n{\n int OrRes1;\n if((dpRes != 0) && (alpha !=0)) {\n   OrRes1 = 1;\n } else {\n   OrRes1 = 0;\n }\n int OrRes2;\n if((rowIdxPair2 != 0) && (beta !=0)) {\n   OrRes2 = 1;\n } else {\n   OrRes2 = 0;\n }\n return (OrRes1 || OrRes2);\n}\n    \n}\nkernel void KERNEL(const global int* restrict v__32816, const global int* restrict v__32817, const global int* restrict v__32818, const global int* restrict v__32819, int v__32820, int v__32821, global int* v__32836, int v_MHeight_2, int v_MWidthC_1, int v_VLength_3){ \n#ifndef WORKGROUP_GUARD\n#define WORKGROUP_GUARD\n#endif\nWORKGROUP_GUARD\n{\n  /* Static local memory */\n  /* Typed Value memory */\n  int v__32823; \n  int v__32826; \n  /* Private Memory */\n  int v__32828; \n  int v__32830; \n  int v__32834; \n  for (int v_gl_id_32813 = get_global_id(0); v_gl_id_32813 < v_MHeight_2; v_gl_id_32813 = (v_gl_id_32813 + get_global_size(0))) {\n    int v_tmp_32869 = 0; \n    v__32823 = v_tmp_32869; \n    /* reduce_while_seq */\n    for (int v_i_32814 = 0; v_i_32814 < v_MWidthC_1; v_i_32814 = (1 + v_i_32814)) {\n      v__32834 = check(v__32823, v__32816[(v_i_32814 + (v_MWidthC_1 * v_gl_id_32813))]); \n      if (v__32834) {\n      } else {\n        break;\n      }\n      int v_tmp_32870 = 0; \n      v__32826 = v_tmp_32870; \n      int v_index_32871 = v__32816[(v_i_32814 + (v_MWidthC_1 * v_gl_id_32813))]; \n      if (v_index_32871 < 0) {\n        v__32828 = v__32826; \n      } else {\n        if (v_index_32871 >= v_VLength_3) {\n          v__32828 = v__32826; \n        } else {\n          v__32828 = v__32818[v_index_32871]; \n        }\n      }\n      v__32830 = bool_and(v__32828, v__32817[(v_i_32814 + (v_MWidthC_1 * v_gl_id_32813))]); \n      v__32823 = bool_or(v__32830, v__32823); \n    }\n    /* end reduce_while_seq */\n    /* map_seq */\n    /* iteration count is exactly 1, no loop emitted */\n    {\n      int v_i_32815 = 0; \n      v__32836[v_gl_id_32813] = doubleAndOr(v__32823, v__32820, v__32819[v_gl_id_32813], v__32821); \n    }\n    /* end map_seq */\n  }\n}}\n\n",
+  "properties" : {
+    "outerMap" : "sglb",
+    "dotProduct" : "earlyexit"
+  },
+  "inputArgs" : [ {
+    "variable" : "v__32816",
+    "addressSpace" : "global",
+    "size" : "(4*v_MHeight_2*v_MWidthC_1)"
+  }, {
+    "variable" : "v__32817",
+    "addressSpace" : "global",
+    "size" : "(4*v_MHeight_2*v_MWidthC_1)"
+  }, {
+    "variable" : "v__32818",
+    "addressSpace" : "global",
+    "size" : "(4*v_VLength_3)"
+  }, {
+    "variable" : "v__32819",
+    "addressSpace" : "global",
+    "size" : "(4*v_MHeight_2)"
+  }, {
+    "variable" : "v__32820",
+    "addressSpace" : "private",
+    "size" : "4"
+  }, {
+    "variable" : "v__32821",
+    "addressSpace" : "private",
+    "size" : "4"
+  } ],
+  "tempGlobals" : [ ],
+  "outputArg" : {
+    "variable" : "v__32836",
+    "addressSpace" : "global",
+    "size" : "(4*v_MHeight_2)"
+  },
+  "tempLocals" : [ ],
+  "paramVars" : [ "MWidthC", "MHeight", "VLength" ]
+}

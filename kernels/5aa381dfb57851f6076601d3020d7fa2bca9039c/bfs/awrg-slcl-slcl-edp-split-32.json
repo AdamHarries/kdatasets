@@ -1,0 +1,52 @@
+{
+  "name" : "awrg-slcl-slcl-edp-split-32",
+  "source" : "#ifndef Tuple2_int_int_DEFINED\n#define Tuple2_int_int_DEFINED\ntypedef struct {\n  int _0;\n  int _1;\n} Tuple2_int_int;\n#endif\n\nint doubleAndOr(int dpRes, int alpha, int rowIdxPair2, int beta){\n  \n{\n int OrRes1;\n if((dpRes != 0) && (alpha !=0)) {\n   OrRes1 = 1;\n } else {\n   OrRes1 = 0;\n }\n int OrRes2;\n if((rowIdxPair2 != 0) && (beta !=0)) {\n   OrRes2 = 1;\n } else {\n   OrRes2 = 0;\n }\n return (OrRes1 || OrRes2);\n}\n    \n}\nint bool_and(int a, int b){\n  { if((a != 0) && (b != 0 )){ return 1; }else{ return 0; } }\n}\nint id(int x){\n  { return x; }\n}\nint bool_or(int a, int b){\n  { if((a != 0) || (b != 0 )){ return 1; }else{ return 0; } }\n}\nint check(int acc, int v){\n  { return (v == -1); }\n}\nkernel void KERNEL(const global int* restrict v__41932, const global int* restrict v__41933, const global int* restrict v__41934, const global int* restrict v__41935, int v__41936, int v__41937, global int* v__41957, global int* v__41939, local int* v__41952, int v_MHeight_2, int v_MWidthC_1, int v_VLength_3){ \n#ifndef WORKGROUP_GUARD\n#define WORKGROUP_GUARD\n#endif\nWORKGROUP_GUARD\n{\n  /* Static local memory */\n  /* Typed Value memory */\n  int v__41941; \n  int v__41943; \n  int v__33398; \n  /* Private Memory */\n  int v__41945_0;\n  \n  int v__41947_0;\n  \n  int v__41951_0;\n  \n  /* atomic_workgroup_map */\n  {\n    global int* v_work_idx_3082 = v__41939; \n    local int v_w_id_41925; \n    if (get_local_id(0) == 0) {\n      v_w_id_41925 = atomic_inc(v_work_idx_3082); \n    }\n    barrier(CLK_LOCAL_MEM_FENCE);\n    \n    while((v_w_id_41925 < v_MHeight_2)){\n      for (int v_l_id_41926 = get_local_id(0); v_l_id_41926 < v_MWidthC_1; v_l_id_41926 = (v_l_id_41926 + get_local_size(0))) {\n        int v_tmp_42023 = 0; \n        v__41941 = v_tmp_42023; \n        /* reduce_while_seq */\n        for (int v_i_41927 = 0; v_i_41927 < 32; v_i_41927 = (1 + v_i_41927)) {\n          v__41951_0 = check(v__41941, v__41932[(v_l_id_41926 + (32 * v_MWidthC_1 * v_w_id_41925) + (v_MWidthC_1 * v_i_41927))]); \n          if (v__41951_0) {\n          } else {\n            break;\n          }\n          int v_tmp_42024 = 0; \n          v__41943 = v_tmp_42024; \n          int v_index_42025 = v__41932[(v_l_id_41926 + (32 * v_MWidthC_1 * v_w_id_41925) + (v_MWidthC_1 * v_i_41927))]; \n          if (v_index_42025 < 0) {\n            v__41945_0 = v__41943; \n          } else {\n            if (v_index_42025 >= v_VLength_3) {\n              v__41945_0 = v__41943; \n            } else {\n              v__41945_0 = v__41934[v_index_42025]; \n            }\n          }\n          v__41947_0 = bool_and(v__41945_0, v__41933[(v_l_id_41926 + (32 * v_MWidthC_1 * v_w_id_41925) + (v_MWidthC_1 * v_i_41927))]); \n          v__41941 = bool_or(v__41947_0, v__41941); \n        }\n        /* end reduce_while_seq */\n        /* map_seq */\n        /* iteration count is exactly 1, no loop emitted */\n        {\n          int v_i_41928 = 0; \n          v__41952[v_l_id_41926] = id(v__41941); \n        }\n        /* end map_seq */\n      }\n      barrier(CLK_LOCAL_MEM_FENCE);\n      \n      /* iteration count is exactly 1 or less, no loop emitted */\n      if (get_local_id(0) < 1) {\n        int v_l_id_41929 = get_local_id(0); \n        int v_tmp_42028 = 0; \n        v__33398 = v_tmp_42028; \n        /* reduce_seq */\n        for (int v_i_41930 = 0; v_i_41930 < v_MWidthC_1; v_i_41930 = (1 + v_i_41930)) {\n          v__33398 = bool_or(v__33398, v__41952[(v_i_41930 + (v_MWidthC_1 * v_l_id_41929))]); \n        }\n        /* end reduce_seq */\n        /* map_seq */\n        /* iteration count is exactly 1, no loop emitted */\n        {\n          int v_i_41931 = 0; \n          v__41957[v_w_id_41925] = doubleAndOr(v__33398, v__41936, v__41935[v_w_id_41925], v__41937); \n        }\n        /* end map_seq */\n      }\n      barrier(CLK_GLOBAL_MEM_FENCE);\n      \n      if (get_local_id(0) == 0) {\n        v_w_id_41925 = atomic_inc(v_work_idx_3082); \n      }\n      barrier(CLK_LOCAL_MEM_FENCE);\n      \n    }\n  }\n  barrier(CLK_GLOBAL_MEM_FENCE);\n  \n}}\n\n",
+  "properties" : {
+    "splitSize" : "32",
+    "innerMap2" : "slcl",
+    "innerMap" : "slcl",
+    "outerMap" : "awrg",
+    "dotProduct" : "earlyexit"
+  },
+  "inputArgs" : [ {
+    "variable" : "v__41932",
+    "addressSpace" : "global",
+    "size" : "(128*v_MHeight_2*v_MWidthC_1)"
+  }, {
+    "variable" : "v__41933",
+    "addressSpace" : "global",
+    "size" : "(128*v_MHeight_2*v_MWidthC_1)"
+  }, {
+    "variable" : "v__41934",
+    "addressSpace" : "global",
+    "size" : "(4*v_VLength_3)"
+  }, {
+    "variable" : "v__41935",
+    "addressSpace" : "global",
+    "size" : "(4*v_MHeight_2)"
+  }, {
+    "variable" : "v__41936",
+    "addressSpace" : "private",
+    "size" : "4"
+  }, {
+    "variable" : "v__41937",
+    "addressSpace" : "private",
+    "size" : "4"
+  } ],
+  "tempGlobals" : [ {
+    "variable" : "v__41939",
+    "addressSpace" : "global",
+    "size" : "4"
+  } ],
+  "outputArg" : {
+    "variable" : "v__41957",
+    "addressSpace" : "global",
+    "size" : "(4*v_MHeight_2)"
+  },
+  "tempLocals" : [ {
+    "variable" : "v__41952",
+    "addressSpace" : "local",
+    "size" : "(4*v_MWidthC_1)"
+  } ],
+  "paramVars" : [ "MWidthC", "MHeight", "VLength" ]
+}
