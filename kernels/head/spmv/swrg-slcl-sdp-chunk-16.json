@@ -1,0 +1,48 @@
+{
+  "name" : "swrg-slcl-sdp-chunk-16",
+  "source" : "#ifndef Tuple2_int_float_DEFINED\n#define Tuple2_int_float_DEFINED\ntypedef struct __attribute__((aligned(4))) {\n  int _0;\n  float _1;\n} Tuple2_int_float;\n#endif\n\nfloat mult(float l, float r){\n  \n//printf(\"l (vect): %f, r (matrix): %f\\n\", l, r);\nreturn l*r;\n    \n}\nfloat add(float x, float y){\n  \n//printf(\"x: %f, y: %f\\n\", x, y);\nreturn x+y;\n    \n}\nfloat doubleMultiplyAdd(float dpRes, float alpha, float rowIdxPair2, float beta){\n  \n{\n //printf(\"dpRes: %f, alpha: %f, rowIdxPair2: %f, beta: %f\\n\", dpRes,alpha,rowIdxPair2, beta);\n return (dpRes*alpha)+(rowIdxPair2*beta);\n}\n    \n}\nkernel void KERNEL(const global int* restrict v__12778, const global float* restrict v__12779, const global float* restrict v__12780, const global float* restrict v__12781, float v__12782, float v__12783, global float* v__12796, global float* v__12790, int v_MHeight_2, int v_MWidthC_1, int v_VLength_3){ \n#ifndef WORKGROUP_GUARD\n#define WORKGROUP_GUARD\n#endif\nWORKGROUP_GUARD\n{\n  /* Static local memory */\n  /* Typed Value memory */\n  float v__12786; \n  float v__12791; \n  /* Private Memory */\n  float v__12788_0;\n  \n  for (int v_wg_id_12773 = get_group_id(0); v_wg_id_12773 < ((v_MHeight_2)/(16)); v_wg_id_12773 = (v_wg_id_12773 + get_num_groups(0))) {\n    for (int v_l_id_12774 = get_local_id(0); v_l_id_12774 < 16; v_l_id_12774 = (v_l_id_12774 + get_local_size(0))) {\n      /* map_seq */\n      for (int v_i_12775 = 0; v_i_12775 < v_MWidthC_1; v_i_12775 = (1 + v_i_12775)) {\n        float v_tmp_12840 = 0.0f; \n        v__12786 = v_tmp_12840; \n        int v_index_12841 = v__12778[(v_i_12775 + (16 * v_MWidthC_1 * v_wg_id_12773) + (v_MWidthC_1 * v_l_id_12774))]; \n        if (v_index_12841 < 0) {\n          v__12788_0 = v__12786; \n        } else {\n          if (v_index_12841 >= v_VLength_3) {\n            v__12788_0 = v__12786; \n          } else {\n            v__12788_0 = v__12780[v_index_12841]; \n          }\n        }\n        v__12790[(-1 + v_MWidthC_1 + (16 * v_MWidthC_1 * v_wg_id_12773) + (-1 * v_i_12775) + (v_MWidthC_1 * v_l_id_12774))] = mult(v__12788_0, v__12779[(v_i_12775 + (16 * v_MWidthC_1 * v_wg_id_12773) + (v_MWidthC_1 * v_l_id_12774))]); \n      }\n      /* end map_seq */\n      float v_tmp_12842 = 0.0f; \n      v__12791 = v_tmp_12842; \n      /* reduce_seq */\n      for (int v_i_12776 = 0; v_i_12776 < v_MWidthC_1; v_i_12776 = (1 + v_i_12776)) {\n        v__12791 = add(v__12791, v__12790[(v_i_12776 + (16 * v_MWidthC_1 * v_wg_id_12773) + (v_MWidthC_1 * v_l_id_12774))]); \n      }\n      /* end reduce_seq */\n      /* map_seq */\n      /* iteration count is exactly 1, no loop emitted */\n      {\n        int v_i_12777 = 0; \n        v__12796[(v_l_id_12774 + (16 * v_wg_id_12773))] = doubleMultiplyAdd(v__12791, v__12782, v__12781[(v_l_id_12774 + (16 * v_wg_id_12773))], v__12783); \n      }\n      /* end map_seq */\n    }\n  }\n}}\n\n",
+  "properties" : {
+    "outerMap" : "swrg",
+    "innerMap" : "slcl",
+    "chunkSize" : "16",
+    "dotProduct" : "seq"
+  },
+  "inputArgs" : [ {
+    "variable" : "v__12778",
+    "addressSpace" : "global",
+    "size" : "(4*v_MHeight_2*v_MWidthC_1)"
+  }, {
+    "variable" : "v__12779",
+    "addressSpace" : "global",
+    "size" : "(4*v_MHeight_2*v_MWidthC_1)"
+  }, {
+    "variable" : "v__12780",
+    "addressSpace" : "global",
+    "size" : "(4*v_VLength_3)"
+  }, {
+    "variable" : "v__12781",
+    "addressSpace" : "global",
+    "size" : "(4*v_MHeight_2)"
+  }, {
+    "variable" : "v__12782",
+    "addressSpace" : "private",
+    "size" : "4"
+  }, {
+    "variable" : "v__12783",
+    "addressSpace" : "private",
+    "size" : "4"
+  } ],
+  "tempGlobals" : [ {
+    "variable" : "v__12790",
+    "addressSpace" : "global",
+    "size" : "(4*v_MHeight_2*v_MWidthC_1)"
+  } ],
+  "outputArg" : {
+    "variable" : "v__12796",
+    "addressSpace" : "global",
+    "size" : "(4*v_MHeight_2)"
+  },
+  "tempLocals" : [ ],
+  "paramVars" : [ "MHeight", "MWidthC", "VLength" ],
+  "outputSize" : "(4*v_MHeight_2)"
+}
