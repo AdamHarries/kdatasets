@@ -28,7 +28,7 @@ cp -r $lift/scripts/generated_programs/* $dname
 # copy $dname to a folder for the head, after clearing it
 hname="kernels/head"
 mkdir -p $hname
-rm -f $hname/*
+rm -rf $hname/*
 cp -r $dname/* $hname
 
 # add those files to git
