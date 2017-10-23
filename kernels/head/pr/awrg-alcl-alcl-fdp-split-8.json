@@ -1,0 +1,53 @@
+{
+  "name" : "awrg-alcl-alcl-fdp-split-8",
+  "source" : "#ifndef Tuple2_int_float_DEFINED\n#define Tuple2_int_float_DEFINED\ntypedef struct __attribute__((aligned(4))) {\n  int _0;\n  float _1;\n} Tuple2_int_float;\n#endif\n\nfloat add(float x, float y){\n  { return x+y; }\n}\nfloat mult(float l, float r){\n  { return l * r; }\n}\nfloat id(float x){\n  { return x; }\n}\nfloat doubleMultiplyAdd(float dpRes, float alpha, float rowIdxPair2, float beta){\n  {return (dpRes*alpha)+(rowIdxPair2*beta);}\n}\nkernel void KERNEL(const global int* restrict v__84122, const global float* restrict v__84123, const global float* restrict v__84124, const global float* restrict v__84125, float v__84126, float v__84127, global float* v__84145, global int* v__84129, local float* v__84140, int v_MHeight_2, int v_MWidthC_1, int v_VLength_3){ \n#ifndef WORKGROUP_GUARD\n#define WORKGROUP_GUARD\n#endif\nWORKGROUP_GUARD\n{\n  /* Static local memory */\n  /* Typed Value memory */\n  float v__84131; \n  float v__84133; \n  float v__80917; \n  /* Private Memory */\n  float v__84135_0;\n  \n  float v__84137_0;\n  \n  /* atomic_workgroup_map */\n  {\n    global int* v_work_idx_7027 = v__84129; \n    local int v_w_id_84115; \n    if (get_local_id(0) == 0) {\n      v_w_id_84115 = atomic_inc(v_work_idx_7027); \n    }\n    barrier(CLK_LOCAL_MEM_FENCE);\n    \n    while((v_w_id_84115 < v_MHeight_2)){\n      /* atomic_local_map */\n      {\n        local int v_work_idx_7025; \n        v_work_idx_7025 = 0; \n        int v_l_id_84116 = atomic_inc(&(v_work_idx_7025)); \n        while((v_l_id_84116 < v_MWidthC_1)){\n          float v_tmp_84196 = 0.0f; \n          v__84131 = v_tmp_84196; \n          /* reduce_seq */\n          for (int v_i_84117 = 0; v_i_84117 < 8; v_i_84117 = (1 + v_i_84117)) {\n            float v_tmp_84197 = 0.0f; \n            v__84133 = v_tmp_84197; \n            int v_index_84198 = v__84122[(v_l_id_84116 + (8 * v_MWidthC_1 * v_w_id_84115) + (v_MWidthC_1 * v_i_84117))]; \n            if (v_index_84198 < 0) {\n              v__84135_0 = v__84133; \n            } else {\n              if (v_index_84198 >= v_VLength_3) {\n                v__84135_0 = v__84133; \n              } else {\n                v__84135_0 = v__84124[v_index_84198]; \n              }\n            }\n            v__84137_0 = mult(v__84135_0, v__84123[(v_l_id_84116 + (8 * v_MWidthC_1 * v_w_id_84115) + (v_MWidthC_1 * v_i_84117))]); \n            v__84131 = add(v__84137_0, v__84131); \n          }\n          /* end reduce_seq */\n          /* map_seq */\n          /* iteration count is exactly 1, no loop emitted */\n          {\n            int v_i_84118 = 0; \n            v__84140[v_l_id_84116] = id(v__84131); \n          }\n          /* end map_seq */\n          v_l_id_84116 = atomic_inc(&(v_work_idx_7025)); \n        }\n      }\n      barrier(CLK_LOCAL_MEM_FENCE);\n      \n      /* atomic_local_map */\n      {\n        local int v_work_idx_7020; \n        v_work_idx_7020 = 0; \n        int v_l_id_84119 = atomic_inc(&(v_work_idx_7020)); \n        while((v_l_id_84119 < 1)){\n          float v_tmp_84201 = 0.0f; \n          v__80917 = v_tmp_84201; \n          /* reduce_seq */\n          for (int v_i_84120 = 0; v_i_84120 < v_MWidthC_1; v_i_84120 = (1 + v_i_84120)) {\n            v__80917 = add(v__80917, v__84140[(v_i_84120 + (v_MWidthC_1 * v_l_id_84119))]); \n          }\n          /* end reduce_seq */\n          /* map_seq */\n          /* iteration count is exactly 1, no loop emitted */\n          {\n            int v_i_84121 = 0; \n            v__84145[v_w_id_84115] = doubleMultiplyAdd(v__80917, v__84126, v__84125[v_w_id_84115], v__84127); \n          }\n          /* end map_seq */\n          v_l_id_84119 = atomic_inc(&(v_work_idx_7020)); \n        }\n      }\n      barrier(CLK_GLOBAL_MEM_FENCE);\n      \n      if (get_local_id(0) == 0) {\n        v_w_id_84115 = atomic_inc(v_work_idx_7027); \n      }\n      barrier(CLK_LOCAL_MEM_FENCE);\n      \n    }\n  }\n  barrier(CLK_GLOBAL_MEM_FENCE);\n  \n}}\n\n",
+  "properties" : {
+    "splitSize" : "8",
+    "innerMap2" : "alcl",
+    "innerMap" : "alcl",
+    "outerMap" : "awrg",
+    "dotProduct" : "fused"
+  },
+  "inputArgs" : [ {
+    "variable" : "v__84122",
+    "addressSpace" : "global",
+    "size" : "(32*v_MHeight_2*v_MWidthC_1)"
+  }, {
+    "variable" : "v__84123",
+    "addressSpace" : "global",
+    "size" : "(32*v_MHeight_2*v_MWidthC_1)"
+  }, {
+    "variable" : "v__84124",
+    "addressSpace" : "global",
+    "size" : "(4*v_VLength_3)"
+  }, {
+    "variable" : "v__84125",
+    "addressSpace" : "global",
+    "size" : "(4*v_MHeight_2)"
+  }, {
+    "variable" : "v__84126",
+    "addressSpace" : "private",
+    "size" : "4"
+  }, {
+    "variable" : "v__84127",
+    "addressSpace" : "private",
+    "size" : "4"
+  } ],
+  "tempGlobals" : [ {
+    "variable" : "v__84129",
+    "addressSpace" : "global",
+    "size" : "4"
+  } ],
+  "outputArg" : {
+    "variable" : "v__84145",
+    "addressSpace" : "global",
+    "size" : "(4*v_MHeight_2)"
+  },
+  "tempLocals" : [ {
+    "variable" : "v__84140",
+    "addressSpace" : "local",
+    "size" : "(4*v_MWidthC_1)"
+  } ],
+  "paramVars" : [ "MHeight", "MWidthC", "VLength" ],
+  "outputSize" : "(4*v_MHeight_2)"
+}
