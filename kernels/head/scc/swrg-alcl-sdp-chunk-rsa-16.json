@@ -1,0 +1,49 @@
+{
+  "name" : "swrg-alcl-sdp-chunk-rsa-16",
+  "source" : "#ifndef Tuple2_int_int_DEFINED\n#define Tuple2_int_int_DEFINED\ntypedef struct __attribute__((aligned(4))) {\n  int _0;\n  int _1;\n} Tuple2_int_int;\n#endif\n\nint int_max(int a, int b){\n  \n{\n int result = max(a, b);\n //printf(\"Input: %d, %d, result: %d\\n\", a, b, result);\n return result;\n }\n \n}\nint int_min(int a, int b){\n  \n{\n int result = min(a, b);\n //printf(\"Input: %d, %d, result: %d\\n\", a, b, result);\n return result;\n }\n \n}\nint doubleMinMax(int dpRes, int alpha, int rowIdxPair2, int beta){\n  \n{\n //int min1 = (dpRes < alpha) ? dpRes : alpha;\n //int min2 = (rowIdxPair2 < beta) ? rowIdxPair2 : beta;\n\n int min1 = min(dpRes, alpha);\n int min2 = min(rowIdxPair2, beta);\n int result = max(min1, min2);\n\n //printf(\"Input: dpres: %d, alpha: %d, yvecelem: %d, beta: %d, min1: %d, min2: %d, result: %d\\n\", dpRes, alpha, rowIdxPair2, beta, min1, min2, result);\n\n return result;\n}\n    \n}\nint id(int x){\n  { return x; }\n}\nkernel void KERNEL(const global int* restrict v__141584, const global int* restrict v__141585, const global int* restrict v__141586, const global int* restrict v__141587, int v__141588, int v__141589, global int* v__141603, global int* v__141602, int v_MHeight_2, int v_MWidthC_1){ \n#ifndef WORKGROUP_GUARD\n#define WORKGROUP_GUARD\n#endif\nWORKGROUP_GUARD\n{\n  /* Static local memory */\n  /* Typed Value memory */\n  int v__141591; \n  int v__141594; \n  /* Private Memory */\n  int v__141596_0;\n  \n  int v__141598_0;\n  \n  for (int v_wg_id_141579 = get_group_id(0); v_wg_id_141579 < ((v_MHeight_2)/(16)); v_wg_id_141579 = (v_wg_id_141579 + get_num_groups(0))) {\n    /* atomic_local_map */\n    {\n      local int v_work_idx_11461; \n      v_work_idx_11461 = 0; \n      int v_l_id_141580 = atomic_inc(&(v_work_idx_11461)); \n      while((v_l_id_141580 < 16)){\n        int v_tmp_141636 = -2147483648; \n        v__141591 = v_tmp_141636; \n        /* reduce_seq */\n        int v_stop_141637 = min(v__141584[(1 + (v__141584[(v_l_id_141580 + (16 * v_wg_id_141579))] / 4))], v__141585[(1 + (v__141585[(v_l_id_141580 + (16 * v_wg_id_141579))] / 4))]); \n        for (int v_i_141581 = 0; v_i_141581 < v_stop_141637; v_i_141581 = (1 + v_i_141581)) {\n          int v_tmp_141642 = -2147483648; \n          v__141594 = v_tmp_141642; \n          int v_index_141644 = v__141584[(2 + v_i_141581 + (v__141584[(v_l_id_141580 + (16 * v_wg_id_141579))] / 4))]; \n          if (v_index_141644 < 0) {\n            v__141596_0 = v__141594; \n          } else {\n            if (v_index_141644 >= v_MWidthC_1) {\n              v__141596_0 = v__141594; \n            } else {\n              v__141596_0 = v__141586[v_index_141644]; \n            }\n          }\n          v__141598_0 = int_min(v__141585[(2 + v_i_141581 + (v__141585[(v_l_id_141580 + (16 * v_wg_id_141579))] / 4))], v__141596_0); \n          v__141591 = int_max(v__141591, v__141598_0); \n        }\n        /* end reduce_seq */\n        /* map_seq */\n        /* iteration count is exactly 1, no loop emitted */\n        {\n          int v_i_141582 = 0; \n          v__141602[(v_l_id_141580 + (16 * v_wg_id_141579))] = doubleMinMax(v__141591, v__141588, v__141587[(v_l_id_141580 + (16 * v_wg_id_141579))], v__141589); \n        }\n        /* end map_seq */\n        /* map_seq */\n        /* iteration count is exactly 1, no loop emitted */\n        {\n          int v_i_141583 = 0; \n          v__141603[(v_l_id_141580 + (16 * v_wg_id_141579))] = id(v__141602[(v_l_id_141580 + (16 * v_wg_id_141579))]); \n        }\n        /* end map_seq */\n        v_l_id_141580 = atomic_inc(&(v_work_idx_11461)); \n      }\n    }\n    barrier(CLK_GLOBAL_MEM_FENCE);\n    \n  }\n}}\n\n",
+  "properties" : {
+    "chunkSize" : "16",
+    "innerMap" : "alcl",
+    "outerMap" : "swrg",
+    "arrayType" : "ragged",
+    "dotProduct" : "seq"
+  },
+  "inputArgs" : [ {
+    "variable" : "v__141584",
+    "addressSpace" : "global",
+    "size" : "?"
+  }, {
+    "variable" : "v__141585",
+    "addressSpace" : "global",
+    "size" : "?"
+  }, {
+    "variable" : "v__141586",
+    "addressSpace" : "global",
+    "size" : "(4*v_MWidthC_1)"
+  }, {
+    "variable" : "v__141587",
+    "addressSpace" : "global",
+    "size" : "(4*v_MHeight_2)"
+  }, {
+    "variable" : "v__141588",
+    "addressSpace" : "private",
+    "size" : "4"
+  }, {
+    "variable" : "v__141589",
+    "addressSpace" : "private",
+    "size" : "4"
+  } ],
+  "tempGlobals" : [ {
+    "variable" : "v__141602",
+    "addressSpace" : "global",
+    "size" : "(4*v_MHeight_2)"
+  } ],
+  "outputArg" : {
+    "variable" : "v__141603",
+    "addressSpace" : "global",
+    "size" : "(4*v_MHeight_2)"
+  },
+  "tempLocals" : [ ],
+  "paramVars" : [ "MHeight", "MWidthC" ],
+  "outputSize" : "(4*v_MHeight_2)"
+}

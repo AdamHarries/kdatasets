@@ -1,0 +1,42 @@
+{
+  "name" : "glb-edp",
+  "source" : "#ifndef Tuple2_int_int_DEFINED\n#define Tuple2_int_int_DEFINED\ntypedef struct __attribute__((aligned(4))) {\n  int _0;\n  int _1;\n} Tuple2_int_int;\n#endif\n\nint int_max(int a, int b){\n  \n{\n int result = max(a, b);\n //printf(\"Input: %d, %d, result: %d\\n\", a, b, result);\n return result;\n }\n \n}\nint int_min(int a, int b){\n  \n{\n int result = min(a, b);\n //printf(\"Input: %d, %d, result: %d\\n\", a, b, result);\n return result;\n }\n \n}\nint check(int acc, int v){\n  { return (v == -1); }\n}\nint doubleMinMax(int dpRes, int alpha, int rowIdxPair2, int beta){\n  \n{\n //int min1 = (dpRes < alpha) ? dpRes : alpha;\n //int min2 = (rowIdxPair2 < beta) ? rowIdxPair2 : beta;\n\n int min1 = min(dpRes, alpha);\n int min2 = min(rowIdxPair2, beta);\n int result = max(min1, min2);\n\n //printf(\"Input: dpres: %d, alpha: %d, yvecelem: %d, beta: %d, min1: %d, min2: %d, result: %d\\n\", dpRes, alpha, rowIdxPair2, beta, min1, min2, result);\n\n return result;\n}\n    \n}\nkernel void KERNEL(const global int* restrict v__135639, const global int* restrict v__135640, const global int* restrict v__135641, const global int* restrict v__135642, int v__135643, int v__135644, global int* v__135659, int v_MHeight_2, int v_MWidthC_1, int v_VLength_3){ \n#ifndef WORKGROUP_GUARD\n#define WORKGROUP_GUARD\n#endif\nWORKGROUP_GUARD\n{\n  /* Static local memory */\n  /* Typed Value memory */\n  int v__135646; \n  int v__135649; \n  /* Private Memory */\n  int v__135651; \n  int v__135653; \n  int v__135657; \n  for (int v_gl_id_135636 = get_global_id(0); v_gl_id_135636 < v_MHeight_2; v_gl_id_135636 = (v_gl_id_135636 + get_global_size(0))) {\n    int v_tmp_135692 = -2147483648; \n    v__135646 = v_tmp_135692; \n    /* reduce_while_seq */\n    for (int v_i_135637 = 0; v_i_135637 < v_MWidthC_1; v_i_135637 = (1 + v_i_135637)) {\n      v__135657 = check(v__135646, v__135639[(v_i_135637 + (v_MWidthC_1 * v_gl_id_135636))]); \n      if (v__135657) {\n      } else {\n        break;\n      }\n      int v_tmp_135693 = -2147483648; \n      v__135649 = v_tmp_135693; \n      int v_index_135694 = v__135639[(v_i_135637 + (v_MWidthC_1 * v_gl_id_135636))]; \n      if (v_index_135694 < 0) {\n        v__135651 = v__135649; \n      } else {\n        if (v_index_135694 >= v_VLength_3) {\n          v__135651 = v__135649; \n        } else {\n          v__135651 = v__135641[v_index_135694]; \n        }\n      }\n      v__135653 = int_min(v__135651, v__135640[(v_i_135637 + (v_MWidthC_1 * v_gl_id_135636))]); \n      v__135646 = int_max(v__135653, v__135646); \n    }\n    /* end reduce_while_seq */\n    /* map_seq */\n    /* iteration count is exactly 1, no loop emitted */\n    {\n      int v_i_135638 = 0; \n      v__135659[v_gl_id_135636] = doubleMinMax(v__135646, v__135643, v__135642[v_gl_id_135636], v__135644); \n    }\n    /* end map_seq */\n  }\n}}\n\n",
+  "properties" : {
+    "outerMap" : "sglb",
+    "dotProduct" : "earlyexit"
+  },
+  "inputArgs" : [ {
+    "variable" : "v__135639",
+    "addressSpace" : "global",
+    "size" : "(4*v_MHeight_2*v_MWidthC_1)"
+  }, {
+    "variable" : "v__135640",
+    "addressSpace" : "global",
+    "size" : "(4*v_MHeight_2*v_MWidthC_1)"
+  }, {
+    "variable" : "v__135641",
+    "addressSpace" : "global",
+    "size" : "(4*v_VLength_3)"
+  }, {
+    "variable" : "v__135642",
+    "addressSpace" : "global",
+    "size" : "(4*v_MHeight_2)"
+  }, {
+    "variable" : "v__135643",
+    "addressSpace" : "private",
+    "size" : "4"
+  }, {
+    "variable" : "v__135644",
+    "addressSpace" : "private",
+    "size" : "4"
+  } ],
+  "tempGlobals" : [ ],
+  "outputArg" : {
+    "variable" : "v__135659",
+    "addressSpace" : "global",
+    "size" : "(4*v_MHeight_2)"
+  },
+  "tempLocals" : [ ],
+  "paramVars" : [ "MHeight", "MWidthC", "VLength" ],
+  "outputSize" : "(4*v_MHeight_2)"
+}

@@ -1,0 +1,57 @@
+{
+  "name" : "awrg-alcl-slcl-sdp-split-16",
+  "source" : "#ifndef Tuple2_int_int_DEFINED\n#define Tuple2_int_int_DEFINED\ntypedef struct __attribute__((aligned(4))) {\n  int _0;\n  int _1;\n} Tuple2_int_int;\n#endif\n\nint int_min(int a, int b){\n  \n{\n int result = min(a, b);\n //printf(\"Input: %d, %d, result: %d\\n\", a, b, result);\n return result;\n }\n \n}\nint int_max(int a, int b){\n  \n{\n int result = max(a, b);\n //printf(\"Input: %d, %d, result: %d\\n\", a, b, result);\n return result;\n }\n \n}\nint id(int x){\n  { return x; }\n}\nint doubleMinMax(int dpRes, int alpha, int rowIdxPair2, int beta){\n  \n{\n //int min1 = (dpRes < alpha) ? dpRes : alpha;\n //int min2 = (rowIdxPair2 < beta) ? rowIdxPair2 : beta;\n\n int min1 = min(dpRes, alpha);\n int min2 = min(rowIdxPair2, beta);\n int result = max(min1, min2);\n\n //printf(\"Input: dpres: %d, alpha: %d, yvecelem: %d, beta: %d, min1: %d, min2: %d, result: %d\\n\", dpRes, alpha, rowIdxPair2, beta, min1, min2, result);\n\n return result;\n}\n    \n}\nkernel void KERNEL(const global int* restrict v__143922, const global int* restrict v__143923, const global int* restrict v__143924, const global int* restrict v__143925, int v__143926, int v__143927, global int* v__143945, global int* v__143935, global int* v__143929, local int* v__143940, int v_MHeight_2, int v_MWidthC_1, int v_VLength_3){ \n#ifndef WORKGROUP_GUARD\n#define WORKGROUP_GUARD\n#endif\nWORKGROUP_GUARD\n{\n  /* Static local memory */\n  /* Typed Value memory */\n  int v__143931; \n  int v__143936; \n  int v__136518; \n  /* Private Memory */\n  int v__143933_0;\n  \n  /* atomic_workgroup_map */\n  {\n    global int* v_work_idx_11683 = v__143929; \n    local int v_w_id_143914; \n    if (get_local_id(0) == 0) {\n      v_w_id_143914 = atomic_inc(v_work_idx_11683); \n    }\n    barrier(CLK_LOCAL_MEM_FENCE);\n    \n    while((v_w_id_143914 < v_MHeight_2)){\n      /* atomic_local_map */\n      {\n        local int v_work_idx_11681; \n        v_work_idx_11681 = 0; \n        int v_l_id_143915 = atomic_inc(&(v_work_idx_11681)); \n        while((v_l_id_143915 < v_MWidthC_1)){\n          /* map_seq */\n          for (int v_i_143916 = 0; v_i_143916 < 16; v_i_143916 = (1 + v_i_143916)) {\n            int v_tmp_144000 = -2147483648; \n            v__143931 = v_tmp_144000; \n            int v_index_144001 = v__143922[(v_l_id_143915 + (16 * v_MWidthC_1 * v_w_id_143914) + (v_MWidthC_1 * v_i_143916))]; \n            if (v_index_144001 < 0) {\n              v__143933_0 = v__143931; \n            } else {\n              if (v_index_144001 >= v_VLength_3) {\n                v__143933_0 = v__143931; \n              } else {\n                v__143933_0 = v__143924[v_index_144001]; \n              }\n            }\n            v__143935[(15 + (16 * v_MWidthC_1 * v_w_id_143914) + (-1 * v_i_143916) + (16 * v_l_id_143915))] = int_min(v__143933_0, v__143923[(v_l_id_143915 + (16 * v_MWidthC_1 * v_w_id_143914) + (v_MWidthC_1 * v_i_143916))]); \n          }\n          /* end map_seq */\n          int v_tmp_144002 = -2147483648; \n          v__143936 = v_tmp_144002; \n          /* reduce_seq */\n          for (int v_i_143917 = 0; v_i_143917 < 16; v_i_143917 = (1 + v_i_143917)) {\n            v__143936 = int_max(v__143936, v__143935[(v_i_143917 + (16 * v_MWidthC_1 * v_w_id_143914) + (16 * v_l_id_143915))]); \n          }\n          /* end reduce_seq */\n          /* map_seq */\n          /* iteration count is exactly 1, no loop emitted */\n          {\n            int v_i_143918 = 0; \n            v__143940[v_l_id_143915] = id(v__143936); \n          }\n          /* end map_seq */\n          v_l_id_143915 = atomic_inc(&(v_work_idx_11681)); \n        }\n      }\n      barrier(CLK_LOCAL_MEM_FENCE);\n      \n      /* iteration count is exactly 1 or less, no loop emitted */\n      if (get_local_id(0) < 1) {\n        int v_l_id_143919 = get_local_id(0); \n        int v_tmp_144005 = -2147483648; \n        v__136518 = v_tmp_144005; \n        /* reduce_seq */\n        for (int v_i_143920 = 0; v_i_143920 < v_MWidthC_1; v_i_143920 = (1 + v_i_143920)) {\n          v__136518 = int_max(v__136518, v__143940[(v_i_143920 + (v_MWidthC_1 * v_l_id_143919))]); \n        }\n        /* end reduce_seq */\n        /* map_seq */\n        /* iteration count is exactly 1, no loop emitted */\n        {\n          int v_i_143921 = 0; \n          v__143945[v_w_id_143914] = doubleMinMax(v__136518, v__143926, v__143925[v_w_id_143914], v__143927); \n        }\n        /* end map_seq */\n      }\n      barrier(CLK_GLOBAL_MEM_FENCE);\n      \n      if (get_local_id(0) == 0) {\n        v_w_id_143914 = atomic_inc(v_work_idx_11683); \n      }\n      barrier(CLK_LOCAL_MEM_FENCE);\n      \n    }\n  }\n  barrier(CLK_GLOBAL_MEM_FENCE);\n  \n}}\n\n",
+  "properties" : {
+    "splitSize" : "16",
+    "innerMap2" : "slcl",
+    "innerMap" : "alcl",
+    "outerMap" : "awrg",
+    "dotProduct" : "seq"
+  },
+  "inputArgs" : [ {
+    "variable" : "v__143922",
+    "addressSpace" : "global",
+    "size" : "(64*v_MHeight_2*v_MWidthC_1)"
+  }, {
+    "variable" : "v__143923",
+    "addressSpace" : "global",
+    "size" : "(64*v_MHeight_2*v_MWidthC_1)"
+  }, {
+    "variable" : "v__143924",
+    "addressSpace" : "global",
+    "size" : "(4*v_VLength_3)"
+  }, {
+    "variable" : "v__143925",
+    "addressSpace" : "global",
+    "size" : "(4*v_MHeight_2)"
+  }, {
+    "variable" : "v__143926",
+    "addressSpace" : "private",
+    "size" : "4"
+  }, {
+    "variable" : "v__143927",
+    "addressSpace" : "private",
+    "size" : "4"
+  } ],
+  "tempGlobals" : [ {
+    "variable" : "v__143935",
+    "addressSpace" : "global",
+    "size" : "(64*v_MHeight_2*v_MWidthC_1)"
+  }, {
+    "variable" : "v__143929",
+    "addressSpace" : "global",
+    "size" : "4"
+  } ],
+  "outputArg" : {
+    "variable" : "v__143945",
+    "addressSpace" : "global",
+    "size" : "(4*v_MHeight_2)"
+  },
+  "tempLocals" : [ {
+    "variable" : "v__143940",
+    "addressSpace" : "local",
+    "size" : "(4*v_MWidthC_1)"
+  } ],
+  "paramVars" : [ "MHeight", "MWidthC", "VLength" ],
+  "outputSize" : "(4*v_MHeight_2)"
+}
