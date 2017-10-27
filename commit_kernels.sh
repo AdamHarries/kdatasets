@@ -31,7 +31,18 @@ mkdir -p $hname
 rm -rf $hname/*
 cp -r $dname/* $hname
 
+# isolate the "rsa" kernels so that they can be run separately
+rname="kernels/rsa"
+mkdir -p $rname
+rm -rf $rname/*
+cp -r $dname/* $rname
+find $rname -not -iname "*rsa*" -a -not -name "." -delete
+
 # add those files to git
 git add $dname
 git add $hname
+git add $rname
 git commit -a -m "add kernels from lift hash: $lghash"
+
+
+
